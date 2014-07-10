@@ -1,7 +1,5 @@
 require 'gosu'
-require_relative 'world'
 require_relative 'simulation'
-require 'pry'
 
 module Evolve
   class Window < Gosu::Window
@@ -9,20 +7,17 @@ module Evolve
       height = width = 640
       super(width, height, false, 1)
       self.caption = 'Hello World!'
-      @world = Evolve::World.build(width, height, scale: 30)
-      @simulation = Evolve::Simulation.new(@world)
+      @simulation = Evolve::Simulation.new(width, height, scale: 30)
       self
     end
 
-    attr_reader :world
-
     def update
-      @world.seed unless @seeded
+      @seeded ? @simulation.step : @simulation.world.seed
       @seeded = true
-      @simulation.step
     end
 
     def draw
+      world = @simulation.world
       world.each do |cell|
         x = cell.x * world.scale
         y = cell.y * world.scale

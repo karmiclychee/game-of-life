@@ -1,9 +1,11 @@
+require_relative 'world'
+
 module Evolve
   class Simulation
     attr_reader :world
 
-    def initialize(world)
-      @world = world
+    def initialize(width, height, scale)
+      @world = Evolve::World.build(width, height, scale)
     end
 
     def step
