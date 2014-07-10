@@ -6,8 +6,8 @@ module Evolve
     def initialize
       height = width = 640
       super(width, height, false, 1)
+      @simulation = Evolve::Simulation.new(width, height, 25)
       self.caption = 'Hello World!'
-      @simulation = Evolve::Simulation.new(width, height, scale: 30)
       self
     end
 

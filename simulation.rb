@@ -11,10 +11,10 @@ module Evolve
     def step
       world.grid.each do |cell|
         living_neighbors = world.neighbors_for(cell).select { |n| n && n.alive? }
-        if cell && cell.alive?
+        if cell.alive?
           cell.kill if living_neighbors.length < 2 || living_neighbors.length > 3
         else
-          cell.vivify(living_neighbors) if cell && living_neighbors.length == 3
+          cell.vivify(living_neighbors) if living_neighbors.length == 3
         end
       end
     end

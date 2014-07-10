@@ -4,7 +4,7 @@ module Evolve
   class World
     include Enumerable
 
-    def self.build(limitX = 10, limitY = 10, scale: 10)
+    def self.build(limitX = 10, limitY = 10, scale = 10)
       grid = []
 
       (limitX/scale).times do |cell|
@@ -22,12 +22,16 @@ module Evolve
     end
 
     def seed
-      (dimensions[0] * dimensions[1] * 0.25).to_i.times do |x|
+      (dimensions[0] * dimensions[1] * 0.12).to_i.times do |x|
         get_tile(rand(dimensions[0]), rand(dimensions[1])).vivify
       end
     end
 
     def get_tile(x, y)
+      x = 0 if x > dimensions[0] - 1
+      y = 0 if y > dimensions[1] - 1
+      x = dimensions[0] - 1 if x < 0
+      y = dimensions[1] - 1 if y < 0
       @grid.select { |tile| tile.x == x && tile.y == y }[0]
     end
 
