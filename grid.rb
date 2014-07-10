@@ -1,43 +1,48 @@
-class Grid
-  include Enumerable
-  attr_reader :grid, :scale
+module Evolve
+  class Grid
+    include Enumerable
+    attr_reader :grid, :scale, :padding
 
-  def self.build(limitX = 10, limitY = 10, scale = 10)
-    grid = []
+    def self.build(limitX = 10, limitY = 10, scale: 10, padding: 1)
+      grid = []
 
-    limitX.times do |cell|
-      limitY.times { |row| grid << Tile.new(cell, row) }
+      (limitX/scale).times do |cell|
+        (limitY/scale).times { |row| grid << Tile.new(cell, row) }
+      end
+
+      new grid, scale, padding
     end
 
-    new grid, scale
-  end
-
-
-  def each
-    @grid.each { |tile| yield tile }
-  end
-
-  def get_tile(x, y)
-    @grid.select {|tile| tile.x == x && tile.y == y }
-  end
-
-  private
-
-  def initialize(grid, scale)
-    @scale = scale
-    @grid = grid
-  end
-
-  class Tile
-    attr_reader :x, :y
-
-    def initialize(cell, row)
-      @x = cell
-      @y = row
+    def each
+      @grid.each do |tile|
+        return to_enum(__method__) unless block_given?
+        yield tile
+      end
     end
 
-    def coordinates
-      [@x, @y]
+    def get_tile(x, y)
+      @grid.select {|tile| tile.x == x && tile.y == y }
+    end
+
+    private
+
+    def initialize(grid, scale, padding)
+      @scale = scale
+      @grid = grid
+      @padding = padding
+    end
+
+    class Tile
+      attr_reader :x, :y
+
+      def initialize(cell, row)
+        @x = cell
+        @y = row
+      end
+
+      def coordinates
+        [@x, @y]
+      end
     end
   end
 end
