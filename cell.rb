@@ -1,14 +1,13 @@
 module Evolve
   class Cell
-    attr_reader :x, :y, :genome
+    attr_reader :x, :y, :skin
+    DEAD = Gosu::Color::BLACK
 
     def initialize(cell, row)
       @x = cell
       @y = row
       @alive = false
-      @genome = {
-        skin: Gosu::Color::BLACK
-      }
+      @skin = DEAD
     end
 
     def coordinates
@@ -18,21 +17,17 @@ module Evolve
     def vivify(progenitors=[])
       @alive = true
 
-      dominant = progenitors.map { |p| p.genome[:skin] }.uniq.first
-      @genome = {
-        skin: dominant || Gosu::Color::GREEN
-      }
+      dominant = progenitors.map { |p| p.skin }.uniq.first
+      @skin = dominant || Gosu::Color::GREEN
 
-      @genome[:skin] = Gosu::Color.argb(
+      @skin = Gosu::Color.argb(
         255, rand(0...255), rand(0...255), rand(0...255)
       ) if rand(100) > 97
     end
 
     def kill
       @alive = false
-      @genome = {
-        skin: Gosu::Color::BLACK
-      }
+      @skin = DEAD
     end
 
     def alive?

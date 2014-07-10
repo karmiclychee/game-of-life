@@ -22,7 +22,7 @@ module Evolve
         x = cell.x * world.scale
         y = cell.y * world.scale
 
-        color = cell.genome[:skin]
+        color = cell.skin
 
         padding = 0.5
 
