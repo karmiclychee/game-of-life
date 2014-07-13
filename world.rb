@@ -15,8 +15,8 @@ module Evolve
     end
 
     def each
+      return to_enum(__method__) unless block_given?
       @grid.each do |tile|
-        return to_enum(__method__) unless block_given?
         yield tile
       end
     end
