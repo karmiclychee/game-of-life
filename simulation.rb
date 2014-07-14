@@ -8,6 +8,10 @@ module Evolve
       @world = Evolve::World.build(width, height, scale)
     end
 
+    def init
+      world.seed
+    end
+
     def step
       world.grid.each do |cell|
         living_neighbors = world.neighbors_for(cell).select { |n| n && n.alive? }
@@ -16,6 +20,24 @@ module Evolve
         else
           cell.vivify(living_neighbors) if living_neighbors.length == 3
         end
+      end
+    end
+
+    def draw_cells
+      @world.map do |cell|
+        scale = @world.scale
+        color = cell.skin
+        padding = 0.5
+
+        x = cell.x * scale
+        y = cell.y * scale
+
+        [
+          x + padding,              y + padding,              color,
+          x + scale - (padding*2),  y + padding,              color,
+          x + padding,              y + scale - (padding*2),  color,
+          x + scale - (padding*2),  y + scale - (padding*2),  color
+        ]
       end
     end
   end
