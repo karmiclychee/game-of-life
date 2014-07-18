@@ -2,10 +2,11 @@ require_relative 'world'
 
 module Evolve
   class Simulation
-    attr_reader :world
+    attr_reader :world, :generation
 
     def initialize(width, height, scale)
       @world = Evolve::World.build(width, height, scale)
+      @generation = 0
     end
 
     def init
@@ -13,6 +14,7 @@ module Evolve
     end
 
     def step
+      @generation += 1
       world.grid.each do |cell|
         living_neighbors = world.neighbors_for(cell).select { |n| n && n.alive? }
         if cell.alive?
@@ -23,7 +25,7 @@ module Evolve
       end
     end
 
-    def draw_cells
+    def get_coordinates
       @world.map do |cell|
         scale = @world.scale
         color = cell.skin

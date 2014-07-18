@@ -28,11 +28,9 @@ module Evolve
     end
 
     def get_tile(x, y)
-      x = 0 if x > dimensions[0] - 1
-      y = 0 if y > dimensions[1] - 1
-      x = dimensions[0] - 1 if x < 0
-      y = dimensions[1] - 1 if y < 0
-      @grid.select { |tile| tile.x == x && tile.y == y }[0]
+      @grid.select do |tile|
+        tile.x == x % dimensions[0] && tile.y == y % dimensions[1]
+      end[0]
     end
 
     def neighbors_for(cell)
