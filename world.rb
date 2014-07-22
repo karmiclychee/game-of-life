@@ -5,20 +5,13 @@ module Evolve
     include Enumerable
 
     def self.build(limitX = 10, limitY = 10, scale = 10)
-      grid = []
+      current_grid = []
 
       (limitX/scale).times do |cell|
-        (limitY/scale).times { |row| grid << Evolve::Cell.new(cell, row) }
+        (limitY/scale).times { |row| current_grid << Evolve::Cell.new(cell, row) }
       end
 
-      new grid, scale, [limitX/scale, limitY/scale]
-    end
-
-    def each
-      return to_enum(__method__) unless block_given?
-      @grid.each do |tile|
-        yield tile
-      end
+      new current_grid, scale, [limitX/scale, limitY/scale]
     end
 
     def seed
@@ -27,10 +20,26 @@ module Evolve
       end
     end
 
-    def get_tile(x, y)
-      @grid.select do |tile|
-        tile.x == x % dimensions[0] && tile.y == y % dimensions[1]
-      end[0]
+    def proliferate
+      @next_grid = @current_grid.map do |cell|
+        conway(cell)
+      end
+    end
+
+    def cull
+      @current_grid = @next_grid.clone
+      @next_grid = []
+    end
+
+    attr_reader :current_grid, :next_grid, :scale, :dimensions
+
+    private
+
+    def initialize(current_grid, scale, dimensions)
+      @scale = scale
+      @current_grid = current_grid
+      @next_grid = []
+      @dimensions = dimensions
     end
 
     def neighbors_for(cell)
@@ -48,13 +57,24 @@ module Evolve
       ]
     end
 
-    attr_reader :grid, :scale, :dimensions
-    private
+    def get_tile(x, y, generation=:current)
+      # this is awful, don't iterate here if you can
+      self.send("#{generation}_grid").select do |tile|
+        tile.x == x % dimensions[0] && tile.y == y % dimensions[1]
+      end[0]
+    end
 
-    def initialize(grid, scale, dimensions)
-      @scale = scale
-      @grid = grid
-      @dimensions = dimensions
+
+    def conway(cell)
+      living_neighbors = neighbors_for(cell).select { |n| n && n.alive? }
+      case
+      when cell.alive? && ( living_neighbors.length < 2 || living_neighbors.length > 3 )
+        cell.clone.decrepify
+      when !cell.alive? && living_neighbors.length == 3
+        cell.clone.vivify
+      else
+        cell.clone
+      end
     end
   end
 end

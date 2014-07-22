@@ -7,6 +7,7 @@ module Evolve
     def initialize(width, height, scale)
       @world = Evolve::World.build(width, height, scale)
       @generation = 0
+      init
     end
 
     def init
@@ -15,18 +16,12 @@ module Evolve
 
     def step
       @generation += 1
-      world.grid.each do |cell|
-        living_neighbors = world.neighbors_for(cell).select { |n| n && n.alive? }
-        if cell.alive?
-          cell.kill if living_neighbors.length < 2 || living_neighbors.length > 3
-        else
-          cell.vivify(living_neighbors) if living_neighbors.length == 3
-        end
-      end
+      world.proliferate
+      world.cull
     end
 
     def get_coordinates
-      @world.map do |cell|
+      @world.current_grid.map do |cell|
         scale = @world.scale
         color = cell.skin
         padding = 0.5

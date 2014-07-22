@@ -17,9 +17,10 @@ module Evolve
       self
     end
 
+    private
+
     def new_simulation
       @simulation = Evolve::Simulation.new(width, height, 30)
-      @seeded = nil
     end
 
     def paused?
@@ -35,10 +36,8 @@ module Evolve
       @button_id = id
     end
 
-
     def update
-      @seeded ? @simulation.step : @simulation.init unless paused?
-      @seeded = true
+      @simulation.step unless paused?
     end
 
     def corner_text
@@ -52,7 +51,6 @@ module Evolve
         draw_quad *coordinates_set
       end
     end
-
   end
 end
 
