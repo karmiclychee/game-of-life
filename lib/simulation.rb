@@ -4,8 +4,8 @@ module Evolve
   class Simulation
     attr_reader :world, :generation
 
-    def initialize(width, height, scale)
-      @world = Evolve::World.build(width, height, scale)
+    def initialize(world)
+      @world = world
       @generation = 0
       init
     end
@@ -26,8 +26,8 @@ module Evolve
         color = cell.skin
         padding = 0.5
 
-        x = cell.x * scale
-        y = cell.y * scale
+        x = cell.coordinates[:x] * scale
+        y = cell.coordinates[:y] * scale
 
         [
           x + padding,              y + padding,              color,
@@ -39,9 +39,3 @@ module Evolve
     end
   end
 end
-
-
-# Any live cell with fewer than two live neighbours dies, as if caused by under-population.
-# Any live cell with two or three live neighbours lives on to the next generation.
-# Any live cell with more than three live neighbours dies, as if by overcrowding.
-# Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.

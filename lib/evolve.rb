@@ -20,7 +20,9 @@ module Evolve
     private
 
     def new_simulation
-      @simulation = Evolve::Simulation.new(width, height, 30)
+      @simulation = Evolve::Simulation.new(
+        Evolve::World.build(20, 20, self)
+      )
     end
 
     def paused?
@@ -53,5 +55,3 @@ module Evolve
     end
   end
 end
-
-Evolve::Window.new.show
